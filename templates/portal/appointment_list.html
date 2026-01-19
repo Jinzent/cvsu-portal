@@ -1,0 +1,56 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Appointments</h2>
+  {% if not staff %}
+    <a class="btn btn-primary" href="{% url 'appointment_create' %}">New Appointment</a>
+  {% endif %}
+</div>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-6">
+    <input class="form-control" name="q" value="{{ q }}" placeholder="Search office/topic/student id...">
+  </div>
+  <div class="col-md-3">
+    <select class="form-select" name="status">
+      <option value="">All Status</option>
+      <option value="PENDING" {% if status == "PENDING" %}selected{% endif %}>Pending</option>
+      <option value="CONFIRMED" {% if status == "CONFIRMED" %}selected{% endif %}>Confirmed</option>
+      <option value="CANCELLED" {% if status == "CANCELLED" %}selected{% endif %}>Cancelled</option>
+      <option value="DONE" {% if status == "DONE" %}selected{% endif %}>Done</option>
+    </select>
+  </div>
+  <div class="col-md-3 d-flex gap-2">
+    <button class="btn btn-outline-primary w-100">Filter</button>
+    <a class="btn btn-outline-secondary w-100" href="{% url 'appointment_list' %}">Reset</a>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    {% for a in items %}
+      <div class="border rounded p-2 mb-2">
+        <div class="d-flex justify-content-between">
+          <div class="fw-semibold">
+            {{ a.office }} • {{ a.topic }} {% if staff %}• {{ a.student.student_id }}{% endif %}
+          </div>
+          <span class="badge text-bg-secondary">{{ a.status }}</span>
+        </div>
+        <div class="text-muted small">{{ a.schedule|date:"M d, Y h:i A" }}</div>
+        <div class="mt-2 d-flex gap-2">
+          {% if staff %}
+            <a class="btn btn-sm btn-primary" href="{% url 'appointment_process' a.pk %}">Process</a>
+          {% else %}
+            {% if a.status == "PENDING" %}
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'appointment_update' a.pk %}">Edit</a>
+              <a class="btn btn-sm btn-outline-danger" href="{% url 'appointment_delete' a.pk %}">Delete</a>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="text-muted">No appointments found.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

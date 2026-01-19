@@ -1,0 +1,40 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Document Types</h2>
+  {% if user.is_staff %}
+    <a class="btn btn-primary" href="{% url 'doc_type_create' %}">New Type</a>
+  {% endif %}
+</div>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-8">
+    <input class="form-control" name="q" value="{{ q }}" placeholder="Search document type...">
+  </div>
+  <div class="col-md-4 d-flex gap-2">
+    <button class="btn btn-outline-primary w-100">Search</button>
+    <a class="btn btn-outline-secondary w-100" href="{% url 'doc_type_list' %}">Reset</a>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    {% for d in items %}
+      <div class="border rounded p-2 mb-2 d-flex justify-content-between align-items-center">
+        <div>
+          <div class="fw-semibold">{{ d.name }}</div>
+          <div class="text-muted small">Fee: ₱{{ d.fee }} • {{ d.processing_days }} day(s) • {% if d.is_active %}Active{% else %}Inactive{% endif %}</div>
+        </div>
+        {% if user.is_staff %}
+          <div class="d-flex gap-2">
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'doc_type_update' d.pk %}">Edit</a>
+            <a class="btn btn-sm btn-outline-danger" href="{% url 'doc_type_delete' d.pk %}">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    {% empty %}
+      <div class="text-muted">No document types found.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

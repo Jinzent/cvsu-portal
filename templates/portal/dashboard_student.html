@@ -1,0 +1,95 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h2 class="mb-0">Dashboard</h2>
+    <div class="text-muted">Student ID: {{ profile.student_id }} • {{ profile.course }} • Year {{ profile.year_level }}</div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <h5 class="card-title mb-0">My Document Requests</h5>
+          <a class="btn btn-sm btn-primary" href="{% url 'request_create' %}">New</a>
+        </div>
+        <div class="mt-2">
+          {% for r in my_requests %}
+            <div class="border rounded p-2 mb-2">
+              <div class="fw-semibold">{{ r.reference_no }} • {{ r.doc_type.name }}</div>
+              <div class="text-muted small">{{ r.status }} • {{ r.requested_at|date:"M d, Y h:i A" }}</div>
+            </div>
+          {% empty %}
+            <div class="text-muted">No requests yet.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <h5 class="card-title mb-0">My Appointments</h5>
+          <a class="btn btn-sm btn-primary" href="{% url 'appointment_create' %}">New</a>
+        </div>
+        <div class="mt-2">
+          {% for a in my_appointments %}
+            <div class="border rounded p-2 mb-2">
+              <div class="fw-semibold">{{ a.office }} • {{ a.topic }}</div>
+              <div class="text-muted small">{{ a.status }} • {{ a.schedule|date:"M d, Y h:i A" }}</div>
+            </div>
+          {% empty %}
+            <div class="text-muted">No appointments yet.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <h5 class="card-title mb-0">My Payments</h5>
+          <a class="btn btn-sm btn-primary" href="{% url 'payment_create' %}">New</a>
+        </div>
+        <div class="mt-2">
+          {% for p in my_payments %}
+            <div class="border rounded p-2 mb-2">
+              <div class="fw-semibold">{{ p.fee_name }} • ₱{{ p.amount }}</div>
+              <div class="text-muted small">{{ p.status }} • {{ p.paid_at|date:"M d, Y h:i A" }}</div>
+            </div>
+          {% empty %}
+            <div class="text-muted">No payments yet.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <h5 class="card-title mb-0">My Inquiries</h5>
+          <a class="btn btn-sm btn-primary" href="{% url 'inquiry_create' %}">New</a>
+        </div>
+        <div class="mt-2">
+          {% for i in my_inquiries %}
+            <div class="border rounded p-2 mb-2">
+              <div class="fw-semibold">{{ i.subject }}</div>
+              <div class="text-muted small">{{ i.status }} • {{ i.created_at|date:"M d, Y h:i A" }}</div>
+            </div>
+          {% empty %}
+            <div class="text-muted">No inquiries yet.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<h2 class="mb-3">Staff Dashboard</h2>
+
+<div class="row g-3 mb-3">
+  <div class="col-lg-3">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="fw-semibold">Requests</div>
+        {% for c in req_counts %}
+          <div class="d-flex justify-content-between small"><span>{{ c.status }}</span><span>{{ c.total }}</span></div>
+        {% empty %}
+          <div class="text-muted small">No data</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="fw-semibold">Appointments</div>
+        {% for c in appt_counts %}
+          <div class="d-flex justify-content-between small"><span>{{ c.status }}</span><span>{{ c.total }}</span></div>
+        {% empty %}
+          <div class="text-muted small">No data</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="fw-semibold">Payments</div>
+        {% for c in pay_counts %}
+          <div class="d-flex justify-content-between small"><span>{{ c.status }}</span><span>{{ c.total }}</span></div>
+        {% empty %}
+          <div class="text-muted small">No data</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="fw-semibold">Inquiries</div>
+        {% for c in inq_counts %}
+          <div class="d-flex justify-content-between small"><span>{{ c.status }}</span><span>{{ c.total }}</span></div>
+        {% empty %}
+          <div class="text-muted small">No data</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Recent Document Requests</h5>
+        {% for r in recent_requests %}
+          <div class="border rounded p-2 mb-2">
+            <div class="fw-semibold">{{ r.reference_no }} • {{ r.student.student_id }} • {{ r.doc_type.name }}</div>
+            <div class="text-muted small">{{ r.status }} • {{ r.requested_at|date:"M d, Y h:i A" }}</div>
+            <a class="btn btn-sm btn-outline-primary mt-2" href="{% url 'request_detail' r.pk %}">Open</a>
+            <a class="btn btn-sm btn-primary mt-2" href="{% url 'request_process' r.pk %}">Process</a>
+          </div>
+        {% empty %}
+          <div class="text-muted">No requests yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Recent Appointments</h5>
+        {% for a in recent_appointments %}
+          <div class="border rounded p-2 mb-2">
+            <div class="fw-semibold">{{ a.student.student_id }} • {{ a.office }} • {{ a.topic }}</div>
+            <div class="text-muted small">{{ a.status }} • {{ a.schedule|date:"M d, Y h:i A" }}</div>
+            <a class="btn btn-sm btn-primary mt-2" href="{% url 'appointment_process' a.pk %}">Process</a>
+          </div>
+        {% empty %}
+          <div class="text-muted">No appointments yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Inquiries</h2>
+  {% if not staff %}
+    <a class="btn btn-primary" href="{% url 'inquiry_create' %}">New Inquiry</a>
+  {% endif %}
+</div>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-6">
+    <input class="form-control" name="q" value="{{ q }}" placeholder="Search subject/message/student id...">
+  </div>
+  <div class="col-md-3">
+    <select class="form-select" name="status">
+      <option value="">All Status</option>
+      <option value="OPEN" {% if status == "OPEN" %}selected{% endif %}>Open</option>
+      <option value="ANSWERED" {% if status == "ANSWERED" %}selected{% endif %}>Answered</option>
+      <option value="CLOSED" {% if status == "CLOSED" %}selected{% endif %}>Closed</option>
+    </select>
+  </div>
+  <div class="col-md-3 d-flex gap-2">
+    <button class="btn btn-outline-primary w-100">Filter</button>
+    <a class="btn btn-outline-secondary w-100" href="{% url 'inquiry_list' %}">Reset</a>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    {% for i in items %}
+      <div class="border rounded p-2 mb-2">
+        <div class="d-flex justify-content-between">
+          <div class="fw-semibold">
+            {{ i.subject }} {% if staff %}• {{ i.student.student_id }}{% endif %}
+          </div>
+          <span class="badge text-bg-secondary">{{ i.status }}</span>
+        </div>
+        <div class="text-muted small">{{ i.created_at|date:"M d, Y h:i A" }}</div>
+        <div class="mt-2">
+          <div class="small"><strong>Message:</strong> {{ i.message }}</div>
+          {% if i.reply %}
+            <div class="small mt-2"><strong>Reply:</strong> {{ i.reply }}</div>
+          {% endif %}
+        </div>
+        <div class="mt-2 d-flex gap-2">
+          {% if staff %}
+            <a class="btn btn-sm btn-primary" href="{% url 'inquiry_process' i.pk %}">Reply/Update</a>
+          {% else %}
+            {% if i.status == "OPEN" %}
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'inquiry_update' i.pk %}">Edit</a>
+              <a class="btn btn-sm btn-outline-danger" href="{% url 'inquiry_delete' i.pk %}">Delete</a>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="text-muted">No inquiries found.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

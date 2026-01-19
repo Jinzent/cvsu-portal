@@ -1,0 +1,42 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Request {{ obj.reference_no }}</h2>
+  {% if staff %}
+    <a class="btn btn-primary" href="{% url 'request_process' obj.pk %}">Process</a>
+  {% endif %}
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="text-muted small">Document</div>
+        <div class="fw-semibold">{{ obj.doc_type.name }}</div>
+      </div>
+      <div class="col-md-6">
+        <div class="text-muted small">Status</div>
+        <div class="fw-semibold">{{ obj.get_status_display }}</div>
+      </div>
+      {% if staff %}
+      <div class="col-md-6">
+        <div class="text-muted small">Student ID</div>
+        <div class="fw-semibold">{{ obj.student.student_id }}</div>
+      </div>
+      {% endif %}
+      <div class="col-md-6">
+        <div class="text-muted small">Requested</div>
+        <div class="fw-semibold">{{ obj.requested_at|date:"M d, Y h:i A" }}</div>
+      </div>
+      <div class="col-12">
+        <div class="text-muted small">Purpose</div>
+        <div class="fw-semibold">{{ obj.purpose }}</div>
+      </div>
+      <div class="col-12">
+        <div class="text-muted small">Remarks</div>
+        <div>{{ obj.remarks|default:"-" }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

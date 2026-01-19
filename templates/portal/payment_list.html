@@ -1,0 +1,55 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Payments</h2>
+  {% if not staff %}
+    <a class="btn btn-primary" href="{% url 'payment_create' %}">New Payment</a>
+  {% endif %}
+</div>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-6">
+    <input class="form-control" name="q" value="{{ q }}" placeholder="Search fee/reference/student id...">
+  </div>
+  <div class="col-md-3">
+    <select class="form-select" name="status">
+      <option value="">All Status</option>
+      <option value="PENDING" {% if status == "PENDING" %}selected{% endif %}>Pending</option>
+      <option value="VERIFIED" {% if status == "VERIFIED" %}selected{% endif %}>Verified</option>
+      <option value="REJECTED" {% if status == "REJECTED" %}selected{% endif %}>Rejected</option>
+    </select>
+  </div>
+  <div class="col-md-3 d-flex gap-2">
+    <button class="btn btn-outline-primary w-100">Filter</button>
+    <a class="btn btn-outline-secondary w-100" href="{% url 'payment_list' %}">Reset</a>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    {% for p in items %}
+      <div class="border rounded p-2 mb-2">
+        <div class="d-flex justify-content-between">
+          <div class="fw-semibold">
+            {{ p.fee_name }} • ₱{{ p.amount }} {% if staff %}• {{ p.student.student_id }}{% endif %}
+          </div>
+          <span class="badge text-bg-secondary">{{ p.status }}</span>
+        </div>
+        <div class="text-muted small">Paid: {{ p.paid_at|date:"M d, Y h:i A" }} • Ref: {{ p.reference|default:"-" }}</div>
+        <div class="mt-2 d-flex gap-2">
+          {% if staff %}
+            <a class="btn btn-sm btn-primary" href="{% url 'payment_process' p.pk %}">Process</a>
+          {% else %}
+            {% if p.status == "PENDING" %}
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'payment_update' p.pk %}">Edit</a>
+              <a class="btn btn-sm btn-outline-danger" href="{% url 'payment_delete' p.pk %}">Delete</a>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="text-muted">No payments found.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

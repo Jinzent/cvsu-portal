@@ -1,0 +1,58 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Document Requests</h2>
+  {% if not staff %}
+    <a class="btn btn-primary" href="{% url 'request_create' %}">New Request</a>
+  {% endif %}
+</div>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-6">
+    <input class="form-control" name="q" value="{{ q }}" placeholder="Search ref/type/purpose/student id...">
+  </div>
+  <div class="col-md-3">
+    <select class="form-select" name="status">
+      <option value="">All Status</option>
+      <option value="PENDING" {% if status == "PENDING" %}selected{% endif %}>Pending</option>
+      <option value="APPROVED" {% if status == "APPROVED" %}selected{% endif %}>Approved</option>
+      <option value="REJECTED" {% if status == "REJECTED" %}selected{% endif %}>Rejected</option>
+      <option value="RELEASED" {% if status == "RELEASED" %}selected{% endif %}>Released</option>
+    </select>
+  </div>
+  <div class="col-md-3 d-flex gap-2">
+    <button class="btn btn-outline-primary w-100">Filter</button>
+    <a class="btn btn-outline-secondary w-100" href="{% url 'request_list' %}">Reset</a>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    {% for r in items %}
+      <div class="border rounded p-2 mb-2">
+        <div class="d-flex justify-content-between">
+          <div class="fw-semibold">
+            {{ r.reference_no }} • {{ r.doc_type.name }}
+            {% if staff %} • {{ r.student.student_id }}{% endif %}
+          </div>
+          <span class="badge text-bg-secondary">{{ r.status }}</span>
+        </div>
+        <div class="text-muted small">{{ r.requested_at|date:"M d, Y h:i A" }}</div>
+        <div class="mt-2 d-flex gap-2">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'request_detail' r.pk %}">Open</a>
+          {% if staff %}
+            <a class="btn btn-sm btn-primary" href="{% url 'request_process' r.pk %}">Process</a>
+          {% else %}
+            {% if r.status == "PENDING" %}
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'request_update' r.pk %}">Edit</a>
+              <a class="btn btn-sm btn-outline-danger" href="{% url 'request_delete' r.pk %}">Delete</a>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="text-muted">No requests found.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
